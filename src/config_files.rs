@@ -227,15 +227,15 @@ pub(crate) fn setup_config(
         &config_file, &env_file, is_login_shell
     );
     let result = catch_unwind(AssertUnwindSafe(|| {
+        if is_login_shell {
+            read_loginshell_file(engine_state, stack);
+        }
+        
         #[cfg(feature = "plugin")]
         read_plugin_file(engine_state, plugin_file, NUSHELL_FOLDER);
 
         read_config_file(engine_state, stack, env_file, true);
         read_config_file(engine_state, stack, config_file, false);
-
-        if is_login_shell {
-            read_loginshell_file(engine_state, stack);
-        }
     }));
     if result.is_err() {
         eprintln!(

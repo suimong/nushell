@@ -24,14 +24,30 @@ pub(crate) fn run_commands(
 ) {
     trace!("run_commands");
     let mut stack = Stack::new();
-    let start_time = std::time::Instant::now();
 
-    // if the --no-config-file(-n) option is NOT passed, load the plugin file,
+    // if the --no-config-file(-n) option is NOT passed, load the login file, load the plugin file,
     // load the default env file or custom (depending on parsed_nu_cli_args.env_file),
     // and maybe a custom config file (depending on parsed_nu_cli_args.config_file)
     //
-    // if the --no-config-file(-n) flag is passed, do not load plugin, env, or config files
+    // if the --no-config-file(-n) flag is passed, do not load login, plugin, env, or config files
+
     if parsed_nu_cli_args.no_config_file.is_none() {
+        // If we have a login shell parameter, read the login file first.
+        let start_time = std::time::Instant::now();
+        if parsed_nu_cli_args.login_shell.is_some() {
+            config_files::read_loginshell_file(engine_state, &mut stack);
+        }
+
+        perf(
+            "read login.nu",
+            start_time,
+            file!(),
+            line!(),
+            column!(),
+            use_color,
+        );
+
+        let start_time = std::time::Instant::now();
         #[cfg(feature = "plugin")]
         read_plugin_file(engine_state, parsed_nu_cli_args.plugin_file, NUSHELL_FOLDER);
 
@@ -46,7 +62,7 @@ pub(crate) fn run_commands(
 
         let start_time = std::time::Instant::now();
         // If we have a env file parameter *OR* we have a login shell parameter, read the env file
-        if parsed_nu_cli_args.env_file.is_some() || parsed_nu_cli_args.login_shell.is_some() {
+        if parsed_nu_cli_args.env_file.is_some() {
             config_files::read_config_file(
                 engine_state,
                 &mut stack,
@@ -68,7 +84,7 @@ pub(crate) fn run_commands(
 
         let start_time = std::time::Instant::now();
         // If we have a config file parameter *OR* we have a login shell parameter, read the config file
-        if parsed_nu_cli_args.config_file.is_some() || parsed_nu_cli_args.login_shell.is_some() {
+        if parsed_nu_cli_args.config_file.is_some() {
             config_files::read_config_file(
                 engine_state,
                 &mut stack,
@@ -79,21 +95,6 @@ pub(crate) fn run_commands(
 
         perf(
             "read config.nu",
-            start_time,
-            file!(),
-            line!(),
-            column!(),
-            use_color,
-        );
-
-        // If we have a login shell parameter, read the login file
-        let start_time = std::time::Instant::now();
-        if parsed_nu_cli_args.login_shell.is_some() {
-            config_files::read_loginshell_file(engine_state, &mut stack);
-        }
-
-        perf(
-            "read login.nu",
             start_time,
             file!(),
             line!(),

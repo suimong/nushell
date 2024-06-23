@@ -1,0 +1,1 @@
+load-env {"envvar_from_config": "foo"}
