@@ -1,6 +1,7 @@
 use nu_engine::command_prelude::*;
 use std::sync::{atomic::AtomicBool, Arc};
 use wax::{Glob as WaxGlob, WalkBehavior, WalkEntry};
+use log::info;
 
 #[derive(Clone)]
 pub struct Glob;
@@ -197,8 +198,10 @@ impl Command for Glob {
             }
         };
 
+        info!("Just before matching exclude patterns...");
         let result = if !not_patterns.is_empty() {
             let np: Vec<&str> = not_patterns.iter().map(|s| s as &str).collect();
+            info!("not_patterns: {:?}", not_patterns);
             let glob_results = glob
                 .walk_with_behavior(
                     path,
@@ -216,7 +219,9 @@ impl Command for Glob {
                     inner: vec![],
                 })?
                 .flatten();
-            glob_to_value(ctrlc, glob_results, no_dirs, no_files, no_symlinks, span)
+            let result = glob_to_value(ctrlc, glob_results, no_dirs, no_files, no_symlinks, span);
+            info!("glob_results: {:?}", result);
+            result
         } else {
             let glob_results = glob
                 .walk_with_behavior(
@@ -261,6 +266,7 @@ fn glob_to_value<'a>(
 ) -> Result<Vec<Value>, ShellError> {
     let mut result: Vec<Value> = Vec::new();
     for entry in glob_results {
+        info!("entry: {:?}", entry);
         if nu_utils::ctrl_c::was_pressed(&ctrlc) {
             result.clear();
             return Err(ShellError::InterruptedByUser { span: None });
