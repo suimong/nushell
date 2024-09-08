@@ -3,9 +3,9 @@ use nu_protocol::ListStream;
 use std::num::NonZeroUsize;
 
 #[derive(Clone)]
-pub struct Chunks;
+pub struct Chain;
 
-impl Command for Chunks {
+impl Command for Chain {
     fn name(&self) -> &str {
         "chunks"
     }
@@ -156,6 +156,6 @@ mod test {
     fn test_examples() {
         use crate::test_examples;
 
-        test_examples(Chunks {})
+        test_examples(Chain {})
     }
 }
