@@ -7,16 +7,16 @@ pub struct Chain;
 
 impl Command for Chain {
     fn name(&self) -> &str {
-        "chunks"
+        "chain"
     }
 
     fn signature(&self) -> Signature {
-        Signature::build("chunks")
+        Signature::build("chain")
             .input_output_types(vec![
-                (Type::table(), Type::list(Type::table())),
-                (Type::list(Type::Any), Type::list(Type::list(Type::Any))),
+                // (Type::Nothing, Type::List(Box::new(Type::Any)),)
+                (Type::Nothing, Type::ListStream,)
             ])
-            .required("chunk_size", SyntaxShape::Int, "The size of each chunk.")
+            .required("iterables", SyntaxShape::List(Box::new(SyntaxShape::Any)), "List of iterables that will be chained together.")
             .category(Category::Filters)
     }
 
