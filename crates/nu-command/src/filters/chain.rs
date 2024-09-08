@@ -21,11 +21,11 @@ impl Command for Chain {
     }
 
     fn description(&self) -> &str {
-        "Divide a list or table into chunks of `chunk_size`."
+        "Chain multiple iterables into one."
     }
 
     fn extra_description(&self) -> &str {
-        "This command will error if `chunk_size` is negative or zero."
+        ""
     }
 
     fn search_terms(&self) -> Vec<&str> {
