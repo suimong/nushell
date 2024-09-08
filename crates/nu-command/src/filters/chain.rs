@@ -66,11 +66,11 @@ impl Command for Chain {
             call_span: head,
         })?;
 
-        chunks(engine_state, input, size, head)
+        chain(engine_state, input, size, head)
     }
 }
 
-pub fn chunks(
+pub fn chain(
     engine_state: &EngineState,
     input: PipelineData,
     chunk_size: NonZeroUsize,
@@ -78,25 +78,25 @@ pub fn chunks(
 ) -> Result<PipelineData, ShellError> {
     match input {
         PipelineData::Value(Value::List { vals, .. }, metadata) => {
-            let chunks = ChunksIter::new(vals, chunk_size, span);
+            let chunks = ChainInter::new(vals, chunk_size, span);
             let stream = ListStream::new(chunks, span, engine_state.signals().clone());
             Ok(PipelineData::ListStream(stream, metadata))
         }
         PipelineData::ListStream(stream, metadata) => {
-            let stream = stream.modify(|iter| ChunksIter::new(iter, chunk_size, span));
+            let stream = stream.modify(|iter| ChainInter::new(iter, chunk_size, span));
             Ok(PipelineData::ListStream(stream, metadata))
         }
         input => Err(input.unsupported_input_error("list", span)),
     }
 }
 
-struct ChunksIter<I: Iterator<Item = Value>> {
+struct ChainInter<I: Iterator<Item = Value>> {
     iter: I,
     size: usize,
     span: Span,
 }
 
-impl<I: Iterator<Item = Value>> ChunksIter<I> {
+impl<I: Iterator<Item = Value>> ChainInter<I> {
     fn new(iter: impl IntoIterator<IntoIter = I>, size: NonZeroUsize, span: Span) -> Self {
         Self {
             iter: iter.into_iter(),
@@ -106,7 +106,7 @@ impl<I: Iterator<Item = Value>> ChunksIter<I> {
     }
 }
 
-impl<I: Iterator<Item = Value>> Iterator for ChunksIter<I> {
+impl<I: Iterator<Item = Value>> Iterator for ChainInter<I> {
     type Item = Value;
 
     fn next(&mut self) -> Option<Self::Item> {
