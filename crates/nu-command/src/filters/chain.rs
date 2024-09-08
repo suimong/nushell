@@ -35,41 +35,11 @@ impl Command for Chain {
     fn examples(&self) -> Vec<Example> {
         vec![
             Example {
-                example: "[1 2 3 4] | chunks 2",
-                description: "Chunk a list into pairs",
+                example: "chain [1..5 10..15]",
+                description: "Chaining two ranges into a single iterable",
                 result: Some(Value::test_list(vec![
                     Value::test_list(vec![Value::test_int(1), Value::test_int(2)]),
                     Value::test_list(vec![Value::test_int(3), Value::test_int(4)]),
-                ])),
-            },
-            Example {
-                example: "[[foo bar]; [0 1] [2 3] [4 5] [6 7] [8 9]] | chunks 3",
-                description: "Chunk the rows of a table into triplets",
-                result: Some(Value::test_list(vec![
-                    Value::test_list(vec![
-                        Value::test_record(record! {
-                            "foo" => Value::test_int(0),
-                            "bar" => Value::test_int(1),
-                        }),
-                        Value::test_record(record! {
-                            "foo" => Value::test_int(2),
-                            "bar" => Value::test_int(3),
-                        }),
-                        Value::test_record(record! {
-                            "foo" => Value::test_int(4),
-                            "bar" => Value::test_int(5),
-                        }),
-                    ]),
-                    Value::test_list(vec![
-                        Value::test_record(record! {
-                            "foo" => Value::test_int(6),
-                            "bar" => Value::test_int(7),
-                        }),
-                        Value::test_record(record! {
-                            "foo" => Value::test_int(8),
-                            "bar" => Value::test_int(9),
-                        }),
-                    ]),
                 ])),
             },
         ]
