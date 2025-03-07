@@ -1,4 +1,4 @@
-use super::{shell_error::io::IoError, ShellError};
+use super::{ParseError, ShellError};
 use crate::Span;
 use miette::Diagnostic;
 use serde::{Deserialize, Serialize};
@@ -248,8 +248,8 @@ impl From<ShellError> for LabeledError {
     }
 }
 
-impl From<IoError> for LabeledError {
-    fn from(err: IoError) -> Self {
+impl From<ParseError> for LabeledError {
+    fn from(err: ParseError) -> Self {
         LabeledError::from_diagnostic(&err)
     }
 }
