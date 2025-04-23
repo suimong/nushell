@@ -4,7 +4,6 @@
 let dev_files = [
   "flake.nix"
   "flake.lock"
-  ".envrc"
   "start-feature.nu"
 ]
 
