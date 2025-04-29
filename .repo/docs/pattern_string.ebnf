@@ -1,0 +1,20 @@
+pattern              ::= (literal | replacement_field)*
+
+literal              ::= (text | brace_esc_l | brace_esc_r)+
+text                 ::= any_char_ex_brace_lr
+any_char_ex_brace_lr ::= <any character except "{" or "}">
+any_char_ex_brace_r  ::= <any character except "}">
+brace_esc_l          ::= "{{"
+brace_esc_r          ::= "}}"
+
+replacement_field    ::= "{" field_name ["="] [ ":" format_spec ] "}"
+field_name           ::= identifier
+
+format_spec          ::= { any_character_except_right_brace }
+
+identifier           ::= letter { letter | digit | "_" }
+
+letter               ::= "A" .. "Z" | "a" .. "z"
+digit                ::= "0" .. "9"
+
+

@@ -1,0 +1,10 @@
+- `Formattable Trait`, perhaps nushell already has something like this?
+- For binding, need a way to capture the variable name, perhaps this part is also done by rose?
+  - can it support capturing the whole cell path as string as well?
+- For quantitative data types (filesize, datetime, duration, int, float ...), string formatting implicitly involves calculation, which brings the question of precision
+  - for datetime, if you are formatting to a lower precision, then it's just truncation.
+  - for filesize, it should be the same: `1.523MiB | format pattern '{.1MiB}'` should be "1.5MiB"
+  - it just so happens that for types that have a "physical" dimension (e.g. filesize), formatting is just about precision and dimension conversion
+- the numbat language (https://github.com/sharkdp/numbat) should be an excellent reference
+- `nom` is already a transitive dependency of multiple crates (cargo tree | grep -B 5 nom), so it makes sense to use `nom` to implement the pattern language parser?
+  - Python's f-string has a [formal grammar](https://docs.python.org/3/reference/lexical_analysis.html#f-strings) that might be helpful
