@@ -1,0 +1,36 @@
+WHITESPACE = _{ " " | "\t" | "\n" | "\r" } // Optional, not used in this grammar
+
+pattern = { (literal | replacement_field)* }
+
+literal = { (non_brace_char | brace_esc_l | brace_esc_r)+ }
+
+non_brace_char = { !("{" | "}") ~ ANY }
+
+// any_char_ex_brace_r = { !"}" ~ ANY }
+
+brace_esc_l = { "{{" }
+
+brace_esc_r = { "}}" }
+
+replacement_field = { "{" ~ field_name ~ eq? ~ format_spec? ~ "}" }
+
+eq = { "=" }
+
+field_name = { identifier }
+identifier = { (ASCII_ALPHA | ASCII_DIGIT | "_")+ }  // TODO: extend this to match valid nushell identifier
+
+// format_spec = { ":" ~ any_char_ex_brace_r* }
+
+format_spec = { options ~ width ~ grouping ~ {"." ~ precision}? ~ type?}
+options = { fill | align | sign | "z" | "#" | "0" }
+fill = non_brace_char // NOTE: Python's str.format() also have this limitation that fill character cannot be a brace: https://docs.python.org/3/library/string.html#format-specification-mini-language
+align = { "<" | ">" | "=" | "^" }
+sign = { "+" | "-" | " " }
+width = { ASCII_DIGIT+ }
+grouping = { ",", "_" }
+precision = { ASCII_DIGIT+ }
+type = { "b" | "c" | "d" | "e" | "E" | "f" | "F" | "g" | "G" | "n" | "o" | "s" | "x" | "X" | "%" }
+
+// letter = { ASCII_ALPHA_LOWER | ASCII_ALPHA_UPPER }
+
+// digit = { ASCII_DIGIT }
