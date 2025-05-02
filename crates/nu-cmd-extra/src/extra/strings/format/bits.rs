@@ -111,7 +111,7 @@ impl Command for FormatBits {
     }
 }
 
-fn format_bits(
+pub fn format_bits(
     engine_state: &EngineState,
     stack: &mut Stack,
     call: &Call,
