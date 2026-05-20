@@ -21,7 +21,7 @@ identifier = { (ASCII_ALPHA | ASCII_DIGIT | "_")+ }  // TODO: extend this to mat
 
 // format_spec = { ":" ~ any_char_ex_brace_r* }
 
-format_spec = { options ~ width ~ grouping ~ {"." ~ precision}? ~ type?}
+format_spec = {":" ~ options ~ width ~ grouping ~ {"." ~ precision}? ~ conversison?}
 options = { fill | align | sign | "z" | "#" | "0" }
 fill = non_brace_char // NOTE: Python's str.format() also have this limitation that fill character cannot be a brace: https://docs.python.org/3/library/string.html#format-specification-mini-language
 align = { "<" | ">" | "=" | "^" }
@@ -29,7 +29,12 @@ sign = { "+" | "-" | " " }
 width = { ASCII_DIGIT+ }
 grouping = { ",", "_" }
 precision = { ASCII_DIGIT+ }
-type = { "b" | "c" | "d" | "e" | "E" | "f" | "F" | "g" | "G" | "n" | "o" | "s" | "x" | "X" | "%" }
+conversion = { conversion_duration | conversion_filesize | conversion_int | conversion_float | conversion_string }
+conversion_int = { "b" | "c" | "d" | "o" | "x" | "X" | "n"}
+conversion_float = { "e" | "E" | "f" | "F" | "g" | "G" | "n" | "%" }
+conversion_filesize = { "B" | "KB" | "MB" | "GB" | "TB" | "PB" | "EB" | "ZB" | "YB" | "KiB" | "MiB" | "GiB" | "TiB" | "PiB" | "EiB" | "ZiB" | "YiB" }
+conversion_duration = {  "ns" | "us" | "µs" | "ms" | "sec" | "min" | "hr" | "day" | "wk" | "month" | "yr" | "dec" }
+conversion_string = {"b" | "q" }
 
 // letter = { ASCII_ALPHA_LOWER | ASCII_ALPHA_UPPER }
 
